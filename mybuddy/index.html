@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expressive AI Buddy with Gestures</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="robot-container">
+        <div id="ai-robot" class="robot happy">
+            <!-- Head with two antennas -->
+            <div class="head">
+                <div class="antenna left"></div>
+                <div class="antenna right"></div>
+                <div class="visor">
+                    <div class="eye left"></div>
+                    <div class="eye right"></div>
+                    <div class="mouth"></div>
+                </div>
+            </div>
+            <!-- Body -->
+            <div class="body">
+                <div class="neck"></div>
+                <div class="chest-panel">
+                    <div class="chest-light"></div>
+                </div>
+            </div>
+            <!-- Limbs with hands -->
+            <div class="arm left"><div class="hand"></div></div>
+            <div class="arm right"><div class="hand"></div></div>
+            <div class="leg left"><div class="foot"></div></div>
+            <div class="leg right"><div class="foot"></div></div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <p>Your buddy can now express itself!</p>
+        <button onclick="setEmotion('happy')">Happy</button>
+        <button onclick="setEmotion('sad')">Sad</button>
+        <button onclick="setEmotion('angry')">Angry</button>
+        <button onclick="setEmotion('thinking')">Thinking</button>
+        <button onclick="setEmotion('surprised')">Surprised</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

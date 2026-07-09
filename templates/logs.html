@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Buddy - Authentication Logs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .logs-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            padding: 2rem;
+        }
+
+        .logs-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .logs-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .logs-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        .password-section {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(20px);
+            box-shadow: var(--glass-shadow);
+            text-align: center;
+        }
+
+        .password-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .password-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .verify-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .verify-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        .verify-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .logs-content {
+            display: none;
+        }
+
+        .logs-content.active {
+            display: block;
+        }
+
+        .logs-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-purple);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .logs-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .refresh-btn, .clear-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            color: white;
+        }
+
+        .clear-btn {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+            color: white;
+        }
+
+        .refresh-btn:hover, .clear-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .logs-table-container {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: var(--glass-shadow);
+            overflow: hidden;
+        }
+
+        .logs-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .logs-table th {
+            background: rgba(139, 92, 246, 0.1);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logs-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .logs-table tr:hover {
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-failed {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            transition: width 0.3s ease;
+        }
+
+        .no-logs {
+            text-align: center;
+            padding: 3rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .no-logs i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--accent-purple);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .loading i {
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .logs-container {
+                padding: 1rem;
+            }
+
+            .logs-title {
+                font-size: 2rem;
+            }
+
+            .logs-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .logs-table {
+                font-size: 0.9rem;
+            }
+
+            .logs-table th,
+            .logs-table td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="logs-container">
+        <div class="logs-header">
+            <a href="/" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to AI Buddy
+            </a>
+            <h1 class="logs-title">Authentication Logs</h1>
+            <p class="logs-subtitle">Monitor all authentication attempts and system activity</p>
+        </div>
+
+        <!-- Password Verification Section -->
+        <div class="password-section" id="password-section">
+            <h3 style="color: white; margin-bottom: 1rem;">
+                <i class="fas fa-lock"></i> Admin Access Required
+            </h3>
+            <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 2rem;">
+                Enter the admin password to view authentication logs
+            </p>
+            <form class="password-form" id="password-form">
+                <input 
+                    type="password" 
+                    class="password-input" 
+                    placeholder="Enter admin password"
+                    id="admin-password"
+                    required
+                >
+                <button type="submit" class="verify-btn" id="verify-btn">
+                    <i class="fas fa-key"></i>
+                    Verify Access
+                </button>
+            </form>
+            <div id="password-error" style="color: #ef4444; margin-top: 1rem; display: none;"></div>
+        </div>
+
+        <!-- Logs Content -->
+        <div class="logs-content" id="logs-content">
+            <!-- Statistics -->
+            <div class="logs-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="total-attempts">0</div>
+                    <div class="stat-label">Total Attempts</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="successful-logins">0</div>
+                    <div class="stat-label">Successful Logins</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="failed-attempts">0</div>
+                    <div class="stat-label">Failed Attempts</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="success-rate">0%</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="logs-controls">
+                <button class="refresh-btn" id="refresh-logs">
+                    <i class="fas fa-sync-alt"></i>
+                    Refresh Logs
+                </button>
+                <button class="clear-btn" id="clear-logs">
+                    <i class="fas fa-trash"></i>
+                    Clear All Logs
+                </button>
+            </div>
+
+            <!-- Logs Table -->
+            <div class="logs-table-container">
+                <div id="logs-loading" class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Loading logs...</p>
+                </div>
+                <div id="logs-table-container" style="display: none;">
+                    <table class="logs-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>User</th>
+                                <th>Status</th>
+                                <th>Confidence</th>
+                                <th>IP Address</th>
+                                <th>Details</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-table-body">
+                        </tbody>
+                    </table>
+                </div>
+                <div id="no-logs" class="no-logs" style="display: none;">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h3>No logs available</h3>
+                    <p>No authentication attempts have been recorded yet.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class LogsManager {
+            constructor() {
+                this.isAuthenticated = false;
+                this.logs = [];
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+            }
+
+            setupEventListeners() {
+                // Password form
+                document.getElementById('password-form').addEventListener('submit', (e) => this.handlePasswordSubmit(e));
+                
+                // Controls
+                document.getElementById('refresh-logs').addEventListener('click', () => this.loadLogs());
+                document.getElementById('clear-logs').addEventListener('click', () => this.clearLogs());
+            }
+
+            async handlePasswordSubmit(e) {
+                e.preventDefault();
+                
+                const password = document.getElementById('admin-password').value;
+                const verifyBtn = document.getElementById('verify-btn');
+                const errorDiv = document.getElementById('password-error');
+                
+                verifyBtn.disabled = true;
+                verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+                errorDiv.style.display = 'none';
+                
+                try {
+                    const response = await fetch('/verify_admin', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ password })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        this.isAuthenticated = true;
+                        document.getElementById('password-section').style.display = 'none';
+                        document.getElementById('logs-content').classList.add('active');
+                        this.loadLogs();
+                    } else {
+                        errorDiv.textContent = result.message;
+                        errorDiv.style.display = 'block';
+                    }
+                } catch (error) {
+                    errorDiv.textContent = 'Error verifying password. Please try again.';
+                    errorDiv.style.display = 'block';
+                } finally {
+                    verifyBtn.disabled = false;
+                    verifyBtn.innerHTML = '<i class="fas fa-key"></i> Verify Access';
+                }
+            }
+
+            async loadLogs() {
+                if (!this.isAuthenticated) return;
+                
+                const loadingDiv = document.getElementById('logs-loading');
+                const tableContainer = document.getElementById('logs-table-container');
+                const noLogsDiv = document.getElementById('no-logs');
+                
+                loadingDiv.style.display = 'block';
+                tableContainer.style.display = 'none';
+                noLogsDiv.style.display = 'none';
+                
+                try {
+                    const password = document.getElementById('admin-password').value;
+                    const response = await fetch(`/get_logs?password=${encodeURIComponent(password)}`);
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        this.logs = result.logs;
+                        this.updateStats();
+                        this.displayLogs();
+                    } else {
+                        this.showError(result.message);
+                    }
+                } catch (error) {
+                    this.showError('Error loading logs. Please try again.');
+                } finally {
+                    loadingDiv.style.display = 'none';
+                }
+            }
+
+            updateStats() {
+                const totalAttempts = this.logs.length;
+                const successfulLogins = this.logs.filter(log => log.success).length;
+                const failedAttempts = totalAttempts - successfulLogins;
+                const successRate = totalAttempts > 0 ? Math.round((successfulLogins / totalAttempts) * 100) : 0;
+                
+                document.getElementById('total-attempts').textContent = totalAttempts;
+                document.getElementById('successful-logins').textContent = successfulLogins;
+                document.getElementById('failed-attempts').textContent = failedAttempts;
+                document.getElementById('success-rate').textContent = `${successRate}%`;
+            }
+
+            displayLogs() {
+                const tableBody = document.getElementById('logs-table-body');
+                const tableContainer = document.getElementById('logs-table-container');
+                const noLogsDiv = document.getElementById('no-logs');
+                
+                if (this.logs.length === 0) {
+                    tableContainer.style.display = 'none';
+                    noLogsDiv.style.display = 'block';
+                    return;
+                }
+                
+                tableBody.innerHTML = this.logs.map(log => `
+                    <tr>
+                        <td>
+                            <div style="display: flex; flex-direction: column;">
+                                <span style="font-weight: 600;">${this.formatTimestamp(log.timestamp)}</span>
+                                <span style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">${this.formatTimeAgo(log.timestamp)}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-user" style="color: var(--accent-purple);"></i>
+                                <span>${log.username || 'Unknown'}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="status-badge ${log.success ? 'status-success' : 'status-failed'}">
+                                <i class="fas ${log.success ? 'fa-check' : 'fa-times'}"></i>
+                                ${log.success ? 'Success' : 'Failed'}
+                            </span>
+                        </td>
+                        <td>
+                            ${log.confidence ? `
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-weight: 600;">${(log.confidence * 100).toFixed(1)}%</span>
+                                    <div class="confidence-bar">
+                                        <div class="confidence-fill" style="width: ${log.confidence * 100}%"></div>
+                                    </div>
+                                </div>
+                            ` : '<span style="color: rgba(255,255,255,0.5);">N/A</span>'}
+                        </td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-globe" style="color: var(--accent-pink);"></i>
+                                <span>${log.ip_address || 'Unknown'}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="max-width: 200px; word-wrap: break-word;">
+                                ${log.error_message ? `
+                                    <span style="color: #ef4444; font-size: 0.9rem;">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        ${log.error_message}
+                                    </span>
+                                ` : log.success ? `
+                                    <span style="color: #10b981; font-size: 0.9rem;">
+                                        <i class="fas fa-check-circle"></i>
+                                        Authentication successful
+                                    </span>
+                                ` : '<span style="color: rgba(255,255,255,0.5);">-</span>'}
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button onclick="window.logsManager.viewLogDetails('${log.id}')" style="padding: 0.25rem 0.5rem; background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 6px; color: var(--accent-purple); cursor: pointer; font-size: 0.8rem;">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button onclick="window.logsManager.exportLog('${log.id}')" style="padding: 0.25rem 0.5rem; background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 6px; color: #10b981; cursor: pointer; font-size: 0.8rem;">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+                
+                tableContainer.style.display = 'block';
+                noLogsDiv.style.display = 'none';
+            }
+
+            async clearLogs() {
+                if (!confirm('Are you sure you want to clear all logs? This action cannot be undone.')) {
+                    return;
+                }
+                
+                try {
+                    const password = document.getElementById('admin-password').value;
+                    const response = await fetch('/clear_logs', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ password })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        this.logs = [];
+                        this.updateStats();
+                        this.displayLogs();
+                        alert('All logs have been cleared successfully.');
+                    } else {
+                        alert('Error clearing logs: ' + result.message);
+                    }
+                } catch (error) {
+                    alert('Error clearing logs. Please try again.');
+                }
+            }
+
+            formatTimestamp(timestamp) {
+                const date = new Date(timestamp);
+                return date.toLocaleString();
+            }
+
+            formatTimeAgo(timestamp) {
+                const now = new Date();
+                const logTime = new Date(timestamp);
+                const diffInSeconds = Math.floor((now - logTime) / 1000);
+                
+                if (diffInSeconds < 60) {
+                    return `${diffInSeconds}s ago`;
+                } else if (diffInSeconds < 3600) {
+                    const minutes = Math.floor(diffInSeconds / 60);
+                    return `${minutes}m ago`;
+                } else if (diffInSeconds < 86400) {
+                    const hours = Math.floor(diffInSeconds / 3600);
+                    return `${hours}h ago`;
+                } else {
+                    const days = Math.floor(diffInSeconds / 86400);
+                    return `${days}d ago`;
+                }
+            }
+
+            viewLogDetails(logId) {
+                const log = this.logs.find(l => l.id === logId);
+                if (!log) return;
+                
+                const details = `
+                    <div style="padding: 1rem; background: var(--glass-bg); border-radius: 12px; margin: 1rem 0;">
+                        <h4 style="color: var(--accent-purple); margin-bottom: 1rem;">
+                            <i class="fas fa-info-circle"></i> Log Details
+                        </h4>
+                        <div style="display: grid; gap: 0.5rem;">
+                            <div><strong>ID:</strong> ${log.id}</div>
+                            <div><strong>Timestamp:</strong> ${this.formatTimestamp(log.timestamp)}</div>
+                            <div><strong>Username:</strong> ${log.username || 'Unknown'}</div>
+                            <div><strong>Status:</strong> ${log.success ? 'Success' : 'Failed'}</div>
+                            <div><strong>Confidence:</strong> ${log.confidence ? (log.confidence * 100).toFixed(2) + '%' : 'N/A'}</div>
+                            <div><strong>IP Address:</strong> ${log.ip_address || 'Unknown'}</div>
+                            <div><strong>Error Message:</strong> ${log.error_message || 'None'}</div>
+                        </div>
+                    </div>
+                `;
+                
+                // Create modal or show details
+                alert(`Log Details:\n\nID: ${log.id}\nTime: ${this.formatTimestamp(log.timestamp)}\nUser: ${log.username || 'Unknown'}\nStatus: ${log.success ? 'Success' : 'Failed'}\nConfidence: ${log.confidence ? (log.confidence * 100).toFixed(2) + '%' : 'N/A'}\nIP: ${log.ip_address || 'Unknown'}\nError: ${log.error_message || 'None'}`);
+            }
+
+            exportLog(logId) {
+                const log = this.logs.find(l => l.id === logId);
+                if (!log) return;
+                
+                const logData = {
+                    id: log.id,
+                    timestamp: log.timestamp,
+                    username: log.username,
+                    success: log.success,
+                    confidence: log.confidence,
+                    ip_address: log.ip_address,
+                    error_message: log.error_message
+                };
+                
+                const dataStr = JSON.stringify(logData, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `log_${logId}.json`;
+                link.click();
+                URL.revokeObjectURL(url);
+            }
+
+            showError(message) {
+                const errorDiv = document.getElementById('password-error');
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.logsManager = new LogsManager();
+        });
+    </script>
+</body>
+</html>

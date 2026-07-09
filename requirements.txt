@@ -1,12 +1,33 @@
-resemblyzer>=0.1.4
-openai-whisper>=20231117
-sounddevice>=0.4.6
-scipy>=1.10.0
-noisereduce>=3.0.0
-pyttsx3>=2.90
-numpy>=1.20.0
-librosa>=0.9.1
-webrtcvad>=2.0.10
-torch>=1.0.1
-SpeechRecognition>=3.10.0
-pyaudio>=0.2.11
+# AI Buddy - Python 3.10 Compatible Requirements (Optimized for Speed)
+# Core web framework
+Flask==2.3.3
+Werkzeug==2.3.7
+
+# Audio processing and machine learning
+numpy==1.24.3
+scipy==1.11.1
+librosa==0.10.1
+soundfile==0.12.1
+sounddevice==0.4.6
+noisereduce==3.0.0
+
+# Voice recognition and synthesis (Medium model for speed)
+resemblyzer==0.1.4
+openai-whisper==20240930
+pyttsx3==2.90
+
+# PyTorch for Whisper (CPU optimized for Python 3.10)
+torch==2.0.1+cpu
+torchaudio==2.0.2+cpu
+
+# Additional dependencies for Python 3.10
+typing-extensions==4.7.1
+
+# Enhanced audio processing
+ffmpeg-python==0.2.0
+
+# Additional ML dependencies for Python 3.10
+scikit-learn==1.3.0
+
+# Python 3.10 specific compatibility
+importlib-metadata==6.8.0

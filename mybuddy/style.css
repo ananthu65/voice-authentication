@@ -1,0 +1,147 @@
+/* General Setup */
+:root {
+    --body-main: #e0e5ec; --body-light: #ffffff;
+    --grey-dark: #7d8da1; --glow-color: #00e5ff;
+}
+body {
+    margin: 0; height: 100vh; background-color: #3a4149;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden;
+}
+.robot-container { animation: idle-hover 5s ease-in-out infinite; }
+.robot { position: relative; width: 250px; height: 300px; }
+
+/* --- HEAD & FACE --- */
+.head {
+    width: 150px; height: 130px;
+    background: linear-gradient(135deg, var(--body-light), var(--body-main));
+    border-radius: 50% 50% 30% 30%; position: absolute; top: 0; left: 50%;
+    transform: translateX(-50%); z-index: 10;
+    box-shadow: inset 0 -10px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.4s ease;
+}
+.visor {
+    width: 110px; height: 70px; background: #1c2025; border-radius: 20px;
+    position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
+    box-shadow: inset 0 2px 10px #000;
+}
+.antenna {
+    width: 8px; height: 50px; background: var(--grey-dark);
+    position: absolute; top: -35px; border-radius: 4px;
+    transform-origin: bottom center; animation: wiggle 3s ease-in-out infinite;
+}
+.antenna.left { left: 40px; transform: rotate(-15deg); animation-delay: -0.2s; }
+.antenna.right { right: 40px; transform: rotate(15deg); }
+.antenna::after {
+    content: ''; width: 16px; height: 16px; background: var(--glow-color);
+    border-radius: 50%; position: absolute; top: -10px; left: -4px;
+    transition: background-color 0.4s ease;
+}
+.eye {
+    width: 30px; height: 30px; background: var(--glow-color);
+    border-radius: 50%; position: absolute; top: 15px;
+    box-shadow: 0 0 15px var(--glow-color), 0 0 25px var(--glow-color), inset 0 0 5px #fff;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+.eye.left { left: 15px; } .eye.right { right: 15px; }
+.mouth {
+    position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+    background: var(--glow-color); box-shadow: 0 0 10px var(--glow-color);
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+/* --- BODY & LIMBS --- */
+.body, .arm, .leg {
+    background: linear-gradient(var(--body-light), var(--body-main));
+    box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.8);
+}
+.body {
+    width: 160px; height: 130px; position: absolute;
+    top: 110px; left: 50%; transform: translateX(-50%);
+    border-radius: 20px 20px 10px 10px; z-index: 5;
+}
+.chest-panel {
+    width: 80px; height: 40px; background: var(--grey-dark); margin: 20px auto;
+    border-radius: 5px; display: grid; place-items: center;
+}
+.chest-light {
+    width: 60px; height: 20px; background: var(--glow-color); border-radius: 5px;
+    box-shadow: 0 0 10px var(--glow-color); animation: flicker 4s linear infinite;
+    transition: all 0.4s ease;
+}
+.arm {
+    width: 40px; height: 100px; position: absolute; top: 120px; z-index: 4;
+    transform-origin: top center;
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Smooth arm movement */
+}
+.hand {
+    width: 100%; height: 20px; background-color: var(--grey-dark); position: absolute; bottom: -10px;
+    border-radius: 10px; transition: transform 0.3s ease;
+}
+.arm.left { left: 20px; transform: rotate(15deg); }
+.arm.right { right: 20px; transform: rotate(-15deg); }
+.leg { top: 220px; height: 80px; width: 40px; position: absolute; z-index: 4; }
+.leg.left { left: 60px; } .leg.right { right: 60px; }
+.foot {
+    width: 50px; height: 30px; background: var(--grey-dark);
+    position: absolute; bottom: -15px; left: -5px; border-radius: 10px 10px 5px 5px;
+}
+
+/* --- EMOTIONAL STATES & GESTURES --- */
+
+/* Happy: Waving Gesture */
+.robot.happy { animation: idle-hover 5s ease-in-out infinite, happy-bounce 1.5s infinite; }
+.robot.happy .mouth { width: 40px; height: 15px; border-radius: 0 0 15px 15px; bottom: 8px; }
+.robot.happy .arm.right { animation: wave 1.5s ease-in-out infinite; }
+
+/* Sad: Slumped Arms */
+.robot.sad { --glow-color: #3498db; }
+.robot.sad .head { transform: translateX(-50%) rotate(-8deg); }
+.robot.sad .arm.left { transform: rotate(5deg) translateY(15px); }
+.robot.sad .arm.right { transform: rotate(-5deg) translateY(15px); }
+.robot.sad .eye { height: 20px; top: 25px; }
+.robot.sad .mouth { width: 30px; height: 15px; border-radius: 15px 15px 0 0; background: transparent; border: 4px solid var(--glow-color); border-bottom: none; }
+
+/* Angry: Clenched Fists */
+.robot.angry { --glow-color: #e74c3c; animation: shake-intense 0.4s infinite; }
+.robot.angry .chest-light, .robot.angry .antenna::after { animation: pulse-red 1s infinite; }
+.robot.angry .arm { transform: translateY(-10px) scale(1.05); }
+.robot.angry .hand { transform: scale(1.2); }
+.robot.angry .eye { height: 8px; border-radius: 2px; top: 20px; transform: rotate(15deg); }
+.robot.angry .eye.right { transform: rotate(-15deg); }
+.robot.angry .mouth { height: 5px; width: 35px; border-radius: 2px; }
+
+/* Thinking: Hand to Chin */
+.robot.thinking { --glow-color: #9b59b6; }
+.robot.thinking .head { transform: translateX(-50%) rotate(10deg) translateY(-5px); }
+.robot.thinking .arm.right { transform: translateY(-70px) translateX(-20px) rotate(-60deg); }
+.robot.thinking .eye.left { transform: scale(0.7); }
+.robot.thinking .mouth { width: 25px; height: 5px; border-radius: 2px; }
+
+/* Surprised: Hands Up! */
+.robot.surprised { --glow-color: #f1c40f; animation: surprise-jump 0.5s; }
+.robot.surprised .arm.left { transform: translateY(-40px) rotate(45deg); }
+.robot.surprised .arm.right { transform: translateY(-40px) rotate(-45deg); }
+.robot.surprised .eye { width: 35px; height: 35px; top: 12px; }
+.robot.surprised .mouth { width: 20px; height: 20px; border-radius: 50%; }
+
+/* --- KEYFRAME ANIMATIONS --- */
+@keyframes idle-hover { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes happy-bounce { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-5px) rotate(2deg); } }
+@keyframes flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+@keyframes shake-intense { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+@keyframes wiggle { 0%, 100% { transform: rotate(-15deg); } 50% { transform: rotate(5deg); } }
+.antenna.right { @keyframes wiggle { 0%, 100% { transform: rotate(15deg); } 50% { transform: rotate(-5deg); } } }
+@keyframes pulse-red { 0%, 100% { box-shadow: 0 0 10px var(--glow-color); } 50% { box-shadow: 0 0 30px var(--glow-color); } }
+@keyframes wave { 0%, 100% { transform: rotate(-15deg); } 50% { transform: rotate(-45deg); } }
+@keyframes surprise-jump { 0% { transform: translateY(0); } 50% { transform: translateY(-20px) scale(1.05); } 100% { transform: translateY(0); } }
+
+/* Controls */
+.controls { text-align: center; color: #fff; margin-top: 30px; z-index: 100; }
+.controls p { margin-bottom: 15px; }
+.controls button {
+    padding: 10px 20px; margin: 5px; border: 2px solid #7d8da1;
+    border-radius: 20px; background: transparent; color: #f0f4f8;
+    cursor: pointer; font-weight: 600; transition: all 0.2s ease;
+}
+.controls button:hover { background: #00e5ff; color: #1c2025; border-color: #00e5ff; }
