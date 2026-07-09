@@ -16,7 +16,7 @@ THRESHOLD = 0.5  # Lowered threshold for better speaker recognition (adjust as n
 RECORD_SECONDS = 3  # Recording duration
 USERS_DIR = 'users'  # Directory for user data
 
-# Text-to-Speech function
+# Text to Speech function
 def speak(text):
     print(f"[SAY]: {text}")
     engine = pyttsx3.init('sapi5')  # Initialize with Windows SAPI5
