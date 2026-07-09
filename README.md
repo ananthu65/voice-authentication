@@ -10,6 +10,7 @@ The project started as a legacy command-line voice authentication system and was
 - Piranavini
 - Hebavarshana
 - Harishraj
+- Venshkar
 
 ## Project Overview
 
