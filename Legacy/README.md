@@ -15,7 +15,7 @@ A Python-based voice authentication system that combines speaker recognition and
 - Python 3.10 or 3.11
 - Windows OS (uses SAPI5 for text-to-speech)
 - Microphone for audio input
-- Internet connection for Whisper model download
+- Internet connection
 
 ## Installation
 
