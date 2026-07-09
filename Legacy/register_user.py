@@ -62,4 +62,4 @@ def register_user():
     print(f"\nUser '{user}' registered successfully with {NUM_SAMPLES} samples!")
 
 if __name__ == "__main__":
-    register_user()
+    register_user() .
