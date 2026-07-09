@@ -94,10 +94,13 @@ You can adjust these parameters in the scripts:
 
 ### Common Issues
 
-1. **Microphone not detected**: Ensure your microphone is connected and working
-2. **Whisper download fails**: Check your internet connection
-3. **Low recognition accuracy**: Try speaking more clearly or adjusting the threshold
-4. **Audio quality issues**: Ensure you're in a quiet environment
+Microphone not detected due to connection or input-device configuration issues.
+
+Whisper model download failures caused by unstable internet connectivity.
+
+Low recognition accuracy when speech was unclear or the detection threshold was not properly tuned.
+
+Background noise reducing audio quality and affecting keyword recognition performance.
 
 ### Dependencies
 
