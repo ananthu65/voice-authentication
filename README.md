@@ -127,7 +127,7 @@ voice-authentication/
 - Working microphone
 - Modern browser such as Chrome, Edge, or Firefox
 - FFmpeg for Whisper audio processing
-- Internet connection for first-time Whisper model download
+
 
 ### Setup
 
