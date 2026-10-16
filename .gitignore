@@ -53,3 +53,9 @@ temp_whisper.wav
 
 # Logs
 *.log
+.venv/
+venv/
+vosk-model-*/
+*.wav
+tempCodeRunnerFile.py
+system_log.txt
